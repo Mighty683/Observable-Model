@@ -96,10 +96,9 @@ DoTest(function () {
 // Comparator Test
 DoTest(function () {
   let model = new Model()
-  let testObj = {
+  model.set('value', {
     a: 1
-  }
-  model.set('value', testObj)
+  })
   model.setComparator('value', function (nextValue, prevValue) {
     return nextValue.a === prevValue.a
   })
@@ -110,6 +109,27 @@ DoTest(function () {
   strictEqual(testFunResult.called, false)
   model.set('value', {
     a: 2
+  })
+  strictEqual(testFunResult.called, true)
+})
+
+// Remove Comparator Test
+DoTest(function () {
+  let model = new Model()
+  model.set('value', {
+    a: 1
+  })
+  model.setComparator('value', function (nextValue, prevValue) {
+    return nextValue.a === prevValue.a
+  })
+  model.set('value', {
+    a: 2
+  })
+  strictEqual(testFunResult.called, false)
+  model.removeComparator('value')
+  model.listenTo('change:value', testFun)
+  model.set('value', {
+    a: 1
   })
   strictEqual(testFunResult.called, true)
 })
