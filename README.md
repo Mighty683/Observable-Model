@@ -3,16 +3,17 @@ Package deliver light-weight model with ability to set-up custom validation and 
 ## Usage
 
 ```js
+let Model = require('observable-model').Model
 let model = new Model()
 ```
 ## Features
 ### Setting and Getting Attributes
 You can set, get and remove attributes from Model.
 ```js
-model.set('name', value) // 'change:value' event emited
+model.set('name', value) // 'change:value' event triggered
 model.get('name') // --> value
 ```
-Changing attribute emits ```'change:${attributeName}'``` event with new value as argument.
+Changing attribute triggers ```'change:${attributeName}'``` event with new value as argument.
 Basic comparator is ```===``` operator.
 ### Comparator
 You can set custom compare function for looking for changes
@@ -22,13 +23,13 @@ model.setComparator('value', function (nextValue, prevValue) {
 })
   model.set('value', {
     a: 1
-  }) // -> emits 'change:value' event
+  }) // -> triggers 'change:value' event
   model.set('value', {
     a: 1
-  }) // -> doesn't emit 'change:value' event
+  }) // -> doesn't trigger 'change:value' event
   model.set('value', {
     a: 2
-  }) // -> emits 'change:value' event
+  }) // -> trigger 'change:value' event
 ```
 ```js
 model.setComparator('value', _.isEqual) // You can use functions from external libraries.
@@ -43,13 +44,13 @@ model.set('value', 3)
 model.setValidation('value', function (nextValue, prevValue) {
   return nextValue < prevValue
 })
-model.set('value', 4) // -> emits 'unvalid:value' event
+model.set('value', 4) // -> triggers 'unvalid:value' event
 model.set('value', 2) // value: 2
 model.validate('value', 5) // returns false
 model.removeValidation('value') // removes value
 model.set('value', 4) // now you are free to set value again
 ```
-Validation on failiture emits ```'unvalid:${attributeName}'``` event with unvalid value as argument.
+Validation on failiture triggers ```'unvalid:${attributeName}'``` event with unvalid value as argument.
 
 ### Event Driver
 You can add/remove custom events
@@ -60,5 +61,5 @@ model.listenTo('eventName', callback) // Subscribe to event with callback
 model.stopListening('eventName') // Unsubscribe event listener
 ```
 ```js
-model.emit('eventName', ...args) // Emiting event
+model.trigger('eventName', ...args) // Trigger event
 ```

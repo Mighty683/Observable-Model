@@ -4,7 +4,8 @@ const Model = require('../index.js')
 let testFun, testFunResult
 function PrepareTestFun () {
   testFunResult = {
-    called: false
+    called: false,
+    args: undefined
   }
   testFun = function () {
     testFunResult = {
@@ -17,20 +18,21 @@ let DoTest = function (callback) {
   PrepareTestFun()
   callback()
 }
-// Listen/Emit Test
+// Listen/Trigger Test
 DoTest(function () {
   let model = new Model()
   model.listenTo('event', testFun)
   strictEqual(testFun, model.getEventList()['event'].callback)
-  model.emit('event', 2, 2)
+  model.trigger('event', 2, 2)
   strictEqual(testFunResult.called, true)
 })
 
 // Remove listener Test
 DoTest(function () {
   let model = new Model()
+  model.listenTo('event', testFun)
   model.stopListening('event')
-  model.emit('event', 2, 2)
+  model.trigger('event', 2, 2)
   strictEqual(testFunResult.called, false)
   strictEqual(model.getEventList()['event'], undefined)
 })
@@ -48,12 +50,50 @@ DoTest(function () {
   strictEqual(model.get('falseValue'), false)
 })
 
+DoTest(function () {
+  let model = new Model()
+  model.listenTo('change:value', testFun)
+  model.set({
+    value: 1,
+    value1: 2
+  })
+
+  strictEqual(testFunResult.called, true)
+  strictEqual(model.get('value'), 1)
+  strictEqual(model.get('value1'), 2)
+})
+
 // Unset Test
+DoTest(function () {
+  let model = new Model({
+    value: 1
+  })
+  model.listenTo('change:value', testFun)
+  model.unset('value')
+  strictEqual(testFunResult.called, true)
+  strictEqual(model.get('value'), undefined)
+})
+
 DoTest(function () {
   let model = new Model()
   model.listenTo('change:value', testFun)
   model.unset('value')
   strictEqual(testFunResult.called, false)
+})
+
+DoTest(function () {
+  let model = new Model()
+  model.set({
+    value: 1,
+    value1: 2,
+    value2: 3
+  })
+  model.unset({
+    value: 1,
+    value1: 2
+  })
+  strictEqual(model.get('value'), undefined)
+  strictEqual(model.get('value2'), 3)
 })
 
 // Validation Test

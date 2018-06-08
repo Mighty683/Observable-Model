@@ -12,7 +12,7 @@ function EventEmiter () {
     }
   }
 
-  this.emit = function (eventName) {
+  this.trigger = function (eventName) {
     if (this._events[eventName] && this._events[eventName].callback instanceof Function) {
       this._events[eventName].callback.apply(this, Array.from(arguments).slice(1))
     }
@@ -22,6 +22,8 @@ function EventEmiter () {
     return this._events
   }
 }
+
+
 function Model (attrsOptions) {
   EventEmiter.call(this)
   this._attributes = attrsOptions || {}
@@ -52,18 +54,37 @@ function Model (attrsOptions) {
     }
   }
 
-  this.unset = function (attrName, value) {
-    if (this._attributes[attrName]) {
-      delete this._attributes[attrName]
-      this.emit('change:' + attrName)
+  this.unset = function (attr) {
+    if (typeof attr === 'string') {
+      this._unset(attr)
+    } else if (typeof attr === 'object') {
+      Object.keys(attr).forEach(function (key) {
+        this._unset(key)
+      }.bind(this))
     }
   }
-  this.set = function (attrName, value) {
+  this._unset = function (attrName) {
+    if (this._attributes[attrName]) {
+      delete this._attributes[attrName]
+      this.trigger('change:' + attrName)
+    }
+  }
+  this.set = function (attr, value) {
+    if (typeof attr === 'string') {
+      this._setAttr(attr, value)
+    } else if (typeof attr === 'object') {
+      Object.keys(attr).forEach(function (key) {
+        this._setAttr(key, attr[key])
+      }.bind(this))
+    }
+  }
+
+  this._setAttr = function (attrName, value) {
     if (this._validations[attrName]) {
       if (this.validate(attrName, value)) {
         this.changeValue(attrName, value)
       } else {
-        this.emit('unvalid:' + attrName, value)
+        this.trigger('unvalid:' + attrName, value)
       }
     } else {
       this.changeValue(attrName, value)
@@ -86,11 +107,11 @@ function Model (attrsOptions) {
     if (this.get(attrName)) {
       if (!this._compare(attrName, value)) {
         this._attributes[attrName] = value
-        this.emit('change:' + attrName, value)
+        this.trigger('change:' + attrName, value)
       }
     } else {
       this._attributes[attrName] = value
-      this.emit('change:' + attrName, value)
+      this.trigger('change:' + attrName, value)
     }
   }
 }
