@@ -3,7 +3,7 @@ Package deliver light-weight model with ability to set-up custom validation and 
 ## Usage
 
 ```js
-let Model = require('observable-model').Model
+let Model = require('observable-model')
 let model = new Model()
 ```
 ## Features
@@ -12,6 +12,12 @@ You can set, get and remove attributes from Model.
 ```js
 model.set('name', value) // 'change:value' event triggered
 model.get('name') // --> value
+```
+You can set multiple attributes by passing object.
+```js
+model.set({name: 'name', value: 1})
+model.get('name') // --> name
+model.get('value') // --> 1
 ```
 Changing attribute triggers ```'change:${attributeName}'``` event with new value as argument.
 Basic comparator is ```===``` operator.
@@ -47,7 +53,7 @@ model.setValidation('value', function (nextValue, prevValue) {
 model.set('value', 4) // -> triggers 'unvalid:value' event
 model.set('value', 2) // value: 2
 model.validate('value', 5) // returns false
-model.removeValidation('value') // removes value
+model.removeValidation('value') // removes value validation
 model.set('value', 4) // now you are free to set value again
 ```
 Validation on failiture triggers ```'unvalid:${attributeName}'``` event with unvalid value as argument.
