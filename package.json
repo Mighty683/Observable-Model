@@ -23,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/Mighty683/Observable-Model/issues"
   },
-  "homepage": "https://github.com/Mighty683/Observable-Model#readme"
+  "homepage": "https://github.com/Mighty683/Observable-Model#readme",
+  "dependencies": {
+    "event-driven-object": "^1.0.0"
+  }
 }

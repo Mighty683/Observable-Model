@@ -11,11 +11,15 @@ let model = new Model()
 You can set, get and remove attributes from Model.
 ```js
 model.set('name', value) // 'change:value' event emited
+
+model.on('change:name', callback) // handle attribute change
+
 model.get('name') // --> value
 ```
 You can set multiple attributes by passing object.
 ```js
 model.set({name: 'name', value: 1})
+
 model.get('name') // --> name
 model.get('value') // --> 1
 ```
@@ -59,13 +63,6 @@ model.set('value', 4) // now you are free to set value again
 Validation on failiture emits ```'unvalid:${attributeName}'``` event with unvalid value as argument.
 
 ### Event Driver
-You can add/remove custom events
-```js
-model.on('eventName', callback) // Subscribe to event with callback
-```
-```js
-model.off('eventName') // Unsubscribe event listener
-```
-```js
-model.emit('eventName', ...args) // emit event
-```
+
+Model extends event-driven-object
+https://www.npmjs.com/package/event-driven-object
