@@ -18,21 +18,21 @@ let DoTest = function (callback) {
   PrepareTestFun()
   callback()
 }
-// Listen/Trigger Test
+// Listen/emit Test
 DoTest(function () {
   let model = new Model()
-  model.listenTo('event', testFun)
+  model.on('event', testFun)
   strictEqual(testFun, model.getEventList()['event'].callback)
-  model.trigger('event', 2, 2)
+  model.emit('event', 2, 2)
   strictEqual(testFunResult.called, true)
 })
 
 // Remove listener Test
 DoTest(function () {
   let model = new Model()
-  model.listenTo('event', testFun)
-  model.stopListening('event')
-  model.trigger('event', 2, 2)
+  model.on('event', testFun)
+  model.off('event')
+  model.emit('event', 2, 2)
   strictEqual(testFunResult.called, false)
   strictEqual(model.getEventList()['event'], undefined)
 })
@@ -42,7 +42,7 @@ DoTest(function () {
   let model = new Model({
     'falseValue': false
   })
-  model.listenTo('change:value', testFun)
+  model.on('change:value', testFun)
   model.set('value', 1)
 
   strictEqual(testFunResult.called, true)
@@ -52,7 +52,7 @@ DoTest(function () {
 
 DoTest(function () {
   let model = new Model()
-  model.listenTo('change:value', testFun)
+  model.on('change:value', testFun)
   model.set({
     value: 1,
     value1: 2
@@ -68,7 +68,7 @@ DoTest(function () {
   let model = new Model({
     value: 1
   })
-  model.listenTo('change:value', testFun)
+  model.on('change:value', testFun)
   model.unset('value')
   strictEqual(testFunResult.called, true)
   strictEqual(model.get('value'), undefined)
@@ -76,7 +76,7 @@ DoTest(function () {
 
 DoTest(function () {
   let model = new Model()
-  model.listenTo('change:value', testFun)
+  model.on('change:value', testFun)
   model.unset('value')
   strictEqual(testFunResult.called, false)
 })
@@ -100,7 +100,7 @@ DoTest(function () {
 DoTest(function () {
   let model = new Model()
   model.set('value', 3)
-  model.listenTo('unvalid:value', testFun)
+  model.on('unvalid:value', testFun)
   model.setValidation('value', function (nextValue, prevValue) {
     return nextValue < prevValue
   })
@@ -139,10 +139,10 @@ DoTest(function () {
   model.set('value', {
     a: 1
   })
-  model.setComparator('value', function (nextValue, prevValue) {
+  model.setComp('value', function (nextValue, prevValue) {
     return nextValue.a === prevValue.a
   })
-  model.listenTo('change:value', testFun)
+  model.on('change:value', testFun)
   model.set('value', {
     a: 1
   })
@@ -159,7 +159,7 @@ DoTest(function () {
   model.set('value', {
     a: 1
   })
-  model.setComparator('value', function (nextValue, prevValue) {
+  model.setComp('value', function (nextValue, prevValue) {
     return nextValue.a === prevValue.a
   })
   model.set('value', {
@@ -167,7 +167,7 @@ DoTest(function () {
   })
   strictEqual(testFunResult.called, false)
   model.removeComparator('value')
-  model.listenTo('change:value', testFun)
+  model.on('change:value', testFun)
   model.set('value', {
     a: 1
   })
