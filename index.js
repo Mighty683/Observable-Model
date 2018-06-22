@@ -1,28 +1,6 @@
-function EventEmiter () {
-  this._events = {}
-  this.listenTo = function (eventName, callback) {
-    this._events[eventName] = {
-      callback: callback
-    }
-  }
+const EventEmiter = require('event-driven-object')
 
-  this.stopListening = function (eventName) {
-    if (this._events[eventName]) {
-      delete this._events[eventName]
-    }
-  }
-
-  this.trigger = function (eventName) {
-    if (this._events[eventName] && this._events[eventName].callback instanceof Function) {
-      this._events[eventName].callback.apply(this, Array.from(arguments).slice(1))
-    }
-  }
-
-  this.getEventList = function () {
-    return this._events
-  }
-}
-
+Model.prototype = Object.create(EventEmiter.prototype)
 
 function Model (attrsOptions) {
   EventEmiter.call(this)
@@ -66,7 +44,7 @@ function Model (attrsOptions) {
   this._unset = function (attrName) {
     if (this._attributes[attrName]) {
       delete this._attributes[attrName]
-      this.trigger('change:' + attrName)
+      this.emit('change:' + attrName)
     }
   }
   this.set = function (attr, value) {
@@ -84,7 +62,7 @@ function Model (attrsOptions) {
       if (this.validate(attrName, value)) {
         this.changeValue(attrName, value)
       } else {
-        this.trigger('unvalid:' + attrName, value)
+        this.emit('unvalid:' + attrName, value)
       }
     } else {
       this.changeValue(attrName, value)
@@ -107,11 +85,11 @@ function Model (attrsOptions) {
     if (this.get(attrName)) {
       if (!this._compare(attrName, value)) {
         this._attributes[attrName] = value
-        this.trigger('change:' + attrName, value)
+        this.emit('change:' + attrName, value)
       }
     } else {
       this._attributes[attrName] = value
-      this.trigger('change:' + attrName, value)
+      this.emit('change:' + attrName, value)
     }
   }
 }
