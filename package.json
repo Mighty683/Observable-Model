@@ -1,6 +1,6 @@
 {
   "name": "observable-model",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Simple Observable Model",
   "main": "index.js",
   "directories": {
