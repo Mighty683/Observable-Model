@@ -25,6 +25,6 @@
   },
   "homepage": "https://github.com/Mighty683/Observable-Model#readme",
   "dependencies": {
-    "event-driven-object": "^1.0.4"
+    "event-driven-object": "^1.0.5"
   }
 }
